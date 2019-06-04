@@ -70,34 +70,26 @@ class Game extends React.Component {
             'coffee': 4
         };
         this.state = {
-            cards: [
-                Array(Object.keys(this.pairs).length).fill(null)
-            ],
-            unmatchedCards: [
-                Object.keys(this.pairs)
-            ],
-            matchedCards: [
-                []
-            ]
+            cards: Array(Object.keys(this.pairs).length).fill(null),
+            unmatchedWords: Object.keys(this.pairs),
+            matchedWords: []
         };
     }
 
     handleClick(i) {
-        let cards = this.state.cards[this.state.cards.length - 1].slice();
-        const unmatchedCards = this.state.unmatchedCards[this.state.unmatchedCards.length - 1].slice();
-        cards[i] = unmatchedCards[i];
+        let cards = this.state.cards.slice();
+        const unmatchedWords = this.state.unmatchedWords.slice();
+        cards[i] = unmatchedWords[i];
 
-        const revealedCards = cards.filter((card) => { return card !== null });
+        const revealedWords = cards.filter((card) => { return card !== null });
 
-        if (revealedCards.length === 2) {
-            if (this.pairs[revealedCards[0]] === this.pairs[revealedCards[1]]) {
-                const updatedMatches = this.state.matchedCards.slice();
-                updatedMatches.push(revealedCards);
-                unmatchedCards.push
+        if (revealedWords.length === 2) {
+            if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
 
                 this.setState({
-                    matchedCards: updatedMatches,
-                    unmatchedCards: this.state.unmatchedCards.concat(unmatchedCards)
+                    matchedWords: this.state.matchedWords.slice().concat(revealedWords),
+                    unmatchedWords: this.state.unmatchedWords.slice()
+                        .filter((word) => { return !revealedWords.includes(word) })
                 })
                 cards = cards.filter((card) => { return card === null });
 
@@ -108,25 +100,19 @@ class Game extends React.Component {
                 // }, 2000)
                 // console.log(cards)
                 // console.log('Done')
-                cards = cards.map(() => {return null});
+                cards = cards.map(() => { return null });
             }
         }
 
-        const updatedCards = this.state.cards[this.state.cards.length - 1].slice();
-        updatedCards.push(cards);
         this.setState({
-            cards: updatedCards
+            cards: cards
         });
-        console.log(this.state.cards)
     }
 
     renderMatches() {
-        const matchedCards = this.state.matchedCards;
-        const curentMatchedCards = matchedCards[matchedCards.length - 1];
-
         const wordsPerRow = 2;
 
-        const words = curentMatchedCards.map((word) => {
+        const words = this.state.matchedWords.map((word) => {
             return (<button>{word}</button>)
         });
 
@@ -161,21 +147,15 @@ class Game extends React.Component {
 
 
     render() {
-        const cards = this.state.cards;
-        const currentCards = cards[cards.length - 1];
-
-        const unmatchedCards = this.state.unmatchedCards;
-        const currentUnmatchedCards = unmatchedCards[unmatchedCards.length - 1];
-
-        if (currentUnmatchedCards.length === 0) {
-            alert('Well done! You matched all the cards!')
+        if (this.state.unmatchedWords.length === 0) {
+            alert('Well done! You matched all the words!')
         }
 
         return (
             <div className="game">
                 <div className="game-deck">
                     <Deck
-                        cards={currentCards}
+                        cards={this.state.cards}
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
