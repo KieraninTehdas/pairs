@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import _shuffle from 'lodash.shuffle'
+import _shuffle from 'lodash.shuffle';
+import * as deckService from './deckService';
 
 function Card(props) {
     return (
@@ -28,16 +29,7 @@ class Deck extends React.Component {
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.pairs = {
-            'wine': 1,
-            'cheese': 1,
-            'potato': 2,
-            'waffles': 2,
-            'toast': 3,
-            'cereal': 3,
-            'tea': 4,
-            'coffee': 4
-        };
+        this.pairs = deckService.getDeck();
         this.state = {
             cards: Array(Object.keys(this.pairs).length).fill(null),
             unmatchedWords: _shuffle(Object.keys(this.pairs)),
