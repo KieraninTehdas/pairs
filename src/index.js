@@ -11,49 +11,17 @@ function Card(props) {
 }
 
 class Deck extends React.Component {
-    renderCard(i) {
-        return (
-            <Card
-                key={i}
-                value={this.props.cards[i]}
-                onClick={() => this.props.onClick(i)}
-            />
-        );
-    }
-
     render() {
-        const cardsPerRow = 4;
-
-        const cards = this.props.cards.map((_card, index) => {
-            return this.renderCard(index)
+        const cards = this.props.cards.map((_card, i) => {
+            return (
+                <Card
+                    key={i}
+                    value={this.props.cards[i]}
+                    onClick={() => this.props.onClick(i)}
+                />
+            );
         });
-
-        const nFullRows = Math.floor(cards.length / cardsPerRow);
-        const rows = [];
-
-        let i = 0;
-
-        while (i <= nFullRows) {
-            let cardsInRow;
-
-            if (i < nFullRows) {
-                cardsInRow = cards.slice((i * cardsPerRow), (i + 1) * cardsPerRow);
-            } else {
-                cardsInRow = cards.slice((i * cardsPerRow));
-            }
-
-            rows.push(<div className="deck-row" key={i}>
-                {cardsInRow}
-            </div>);
-
-            i += 1;
-        }
-
-        return (
-            <div>
-                {rows}
-            </div>
-        );
+        return generateRows(4, cards, 'deck-row');
     }
 }
 
@@ -111,8 +79,6 @@ class Game extends React.Component {
     }
 
     renderMatches() {
-        const wordsPerRow = 2;
-
         const words = this.state.matchedWords.map((word, i) => {
             return <Card
                 key={i}
@@ -120,32 +86,7 @@ class Game extends React.Component {
             />
         });
 
-        const nFullRows = Math.floor(words.length / wordsPerRow);
-        const rows = [];
-
-        let i = 0;
-
-        while (i <= nFullRows) {
-            let wordsInRow;
-
-            if (i < nFullRows) {
-                wordsInRow = words.slice((i * wordsPerRow), (i + 1) * wordsPerRow);
-            } else {
-                wordsInRow = words.slice((i * wordsPerRow));
-            }
-
-            rows.push(<div className="matched-row" key={i}>
-                {wordsInRow}
-            </div>);
-
-            i += 1;
-        }
-
-        return (
-            <div>
-                {rows}
-            </div>
-        );
+        return generateRows(2, words, 'matched-row');
     }
 
 
@@ -176,4 +117,33 @@ ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
+
+function generateRows(nColumns, contents, divClassName) {
+    const nFullRows = Math.floor(contents.length / nColumns);
+    const rows = [];
+
+    let i = 0;
+
+    while (i <= nFullRows) {
+        let rowContent;
+
+        if (i < nFullRows) {
+            rowContent = contents.slice((i * nColumns), (i + 1) * nColumns);
+        } else {
+            rowContent = contents.slice((i * nColumns));
+        }
+
+        rows.push(<div className={divClassName} key={i}>
+            {rowContent}
+        </div>);
+
+        i += 1;
+    }
+
+    return (
+        <div>
+            {rows}
+        </div>
+    );
+}
 
