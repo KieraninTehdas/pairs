@@ -82,39 +82,42 @@ class Game extends React.Component {
         const unmatchedWords = this.state.unmatchedWords.slice();
         cards[i] = unmatchedWords[i];
 
-        const revealedWords = cards.filter((card) => { return card !== null });
-
-        if (revealedWords.length === 2) {
-            if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
-
-                this.setState({
-                    matchedWords: this.state.matchedWords.slice().concat(revealedWords),
-                    unmatchedWords: this.state.unmatchedWords.slice()
-                        .filter((word) => { return !revealedWords.includes(word) })
-                })
-                cards = cards.filter((card) => { return card === null });
-
-            } else {
-                // setTimeout(() => {
-                //     console.log('Called set null')
-                //     cards = cards.map(() => null)
-                // }, 2000)
-                // console.log(cards)
-                // console.log('Done')
-                cards = cards.map(() => { return null });
-            }
-        }
-
         this.setState({
             cards: cards
         });
+
+        const revealedWords = cards.filter((card) => { return card !== null });
+
+        if (revealedWords.length === 2) {
+
+            if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
+                this.setState({
+                    matchedWords: this.state.matchedWords.slice().concat(revealedWords),
+                    unmatchedWords: this.state.unmatchedWords.slice()
+                        .filter((word) => { return !revealedWords.includes(word) }),
+                    cards: cards.filter((card) => { return card === null })
+                })
+            } else {
+                setTimeout(() => {
+                    cards = cards.map(() => { return null });
+                    this.setState({
+                        cards: cards
+                    });
+                }, 2000);
+            }
+
+        }
+
     }
 
     renderMatches() {
         const wordsPerRow = 2;
 
-        const words = this.state.matchedWords.map((word) => {
-            return (<button>{word}</button>)
+        const words = this.state.matchedWords.map((word, i) => {
+            return <Card
+                key={i}
+                value={word}
+            />
         });
 
         const nFullRows = Math.floor(words.length / wordsPerRow);
@@ -166,7 +169,6 @@ class Game extends React.Component {
                 </div>
             </div>
         );
-
     }
 }
 
