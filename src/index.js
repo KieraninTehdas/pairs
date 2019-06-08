@@ -42,21 +42,26 @@ class Game extends React.Component {
         const unmatchedWords = this.state.unmatchedWords.slice();
         cards[i] = unmatchedWords[i];
 
-        this.setState({
-            cards: cards
-        });
-
         const revealedWords = cards.filter((card) => { return card !== null });
+
+
+        console.log(revealedWords)
+
+        if (revealedWords.length < 3) {
+            this.setState({
+                cards: cards
+            });
+        }
 
         if (revealedWords.length === 2) {
 
             if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
                 this.setState({
                     matchedWords: this.state.matchedWords.slice().concat(revealedWords),
-                    unmatchedWords: this.state.unmatchedWords.slice()
+                    unmatchedWords: unmatchedWords
                         .filter((word) => { return !revealedWords.includes(word) }),
                     cards: cards.filter((card) => { return card === null })
-                })
+                });
             } else {
                 setTimeout(() => {
                     cards = cards.map(() => { return null });
@@ -65,7 +70,6 @@ class Game extends React.Component {
                     });
                 }, 2000);
             }
-
         }
 
     }
@@ -80,8 +84,6 @@ class Game extends React.Component {
 
         return generateRows(2, words, 'matched-row');
     }
-
-
 
     render() {
         if (this.state.unmatchedWords.length === 0) {
