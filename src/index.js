@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import _shuffle from 'lodash.shuffle'
 
 function Card(props) {
     return (
@@ -71,7 +72,7 @@ class Game extends React.Component {
         };
         this.state = {
             cards: Array(Object.keys(this.pairs).length).fill(null),
-            unmatchedWords: Object.keys(this.pairs),
+            unmatchedWords: _shuffle(Object.keys(this.pairs)),
             matchedWords: []
         };
     }
