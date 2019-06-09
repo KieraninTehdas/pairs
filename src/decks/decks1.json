@@ -1,0 +1,36 @@
+{
+    "common1": [
+        {
+            "firstWord": "paitsi",
+            "secondWord": "except"
+        },
+        {
+            "firstWord": "vaikka",
+            "secondWord": "although/for example"
+        },
+        {
+            "firstWord": "antaa",
+            "secondWord": "to give"
+        },
+        {
+            "firstWord": "yritää",
+            "secondWord": "to try"
+        },
+        {
+            "firstWord": "mielellä",
+            "secondWord": "gladly"
+        },
+        {
+            "firstWord": "sillä",
+            "secondWord": "because"
+        },
+        {
+            "firstWord": "tila",
+            "secondWord": "space-state"
+        },
+        {
+            "firstWord": "jopa",
+            "secondWord": "even"
+        }
+    ]
+}

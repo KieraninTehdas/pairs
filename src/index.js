@@ -140,4 +140,3 @@ function generateRows(nColumns, contents, divClassName) {
         </div>
     );
 }
-
