@@ -11,19 +11,17 @@ function Card(props) {
     );
 }
 
-class Deck extends React.Component {
-    render() {
-        const cards = this.props.cards.map((_card, i) => {
-            return (
-                <Card
-                    key={i}
-                    value={this.props.cards[i]}
-                    onClick={() => this.props.onClick(i)}
-                />
-            );
-        });
-        return generateRows(4, cards, 'deck-row');
-    }
+function Deck(props) {
+    const cards = props.cards.map((_card, i) => {
+        return (
+            <Card
+                key={i}
+                value={props.cards[i]}
+                onClick={() => props.onClick(i)}
+            />
+        );
+    });
+    return generateRows(4, cards, 'deck-row');
 }
 
 class Game extends React.Component {
