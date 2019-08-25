@@ -1,4 +1,14 @@
 {
+    "test": [
+        {
+            "firstWord": "menna",
+            "secondWord": "to go"
+        },
+        {
+            "firstWord": "olla",
+            "secondWord": "to be"
+        }
+    ],
     "common1": [
         {
             "firstWord": "paitsi",

@@ -1,7 +1,7 @@
-export function getDeck() {
+export function getDeck(deckName) {
     const pairs = {};
 
-    decks.test.forEach((entry, i) => {
+    decks[deckName].forEach((entry, i) => {
         pairs[entry.firstWord] = i;
         pairs[entry.secondWord] = i;
     });
@@ -9,4 +9,4 @@ export function getDeck() {
     return pairs;
 }
 
-const decks = require('./decks/decks0.json')
+const decks = require('./decks/decks1.json')

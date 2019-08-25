@@ -27,7 +27,7 @@ function Deck(props) {
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.pairs = deckService.getDeck();
+        this.pairs = deckService.getDeck('test');
         this.state = {
             cards: Array(Object.keys(this.pairs).length).fill(null),
             unmatchedWords: _shuffle(Object.keys(this.pairs)),
