@@ -1,0 +1,12 @@
+{
+    "test": [
+        {
+            "firstWord": "menna",
+            "secondWord": "to go"
+        },
+        {
+            "firstWord": "olla",
+            "secondWord": "to be"
+        }
+    ]
+}
