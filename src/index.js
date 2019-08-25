@@ -11,29 +11,28 @@ function Card(props) {
     );
 }
 
-class Deck extends React.Component {
-    render() {
-        const cards = this.props.cards.map((_card, i) => {
-            return (
-                <Card
-                    key={i}
-                    value={this.props.cards[i]}
-                    onClick={() => this.props.onClick(i)}
-                />
-            );
-        });
-        return generateRows(4, cards, 'deck-row');
-    }
+function Deck(props) {
+    const cards = props.cards.map((_card, i) => {
+        return (
+            <Card
+                key={i}
+                value={props.cards[i]}
+                onClick={() => props.onClick(i)}
+            />
+        );
+    });
+    return generateRows(4, cards, 'deck-row');
 }
 
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.pairs = deckService.getDeck();
+        this.pairs = deckService.getDeck('test');
         this.state = {
             cards: Array(Object.keys(this.pairs).length).fill(null),
             unmatchedWords: _shuffle(Object.keys(this.pairs)),
-            matchedWords: []
+            matchedWords: [],
+            nAttempts: 0,
         };
     }
 
@@ -56,12 +55,15 @@ class Game extends React.Component {
         if (revealedWords.length === 2) {
 
             if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
-                this.setState({
-                    matchedWords: this.state.matchedWords.slice().concat(revealedWords),
-                    unmatchedWords: unmatchedWords
-                        .filter((word) => { return !revealedWords.includes(word) }),
-                    cards: cards.filter((card) => { return card === null })
-                });
+                setTimeout(() => {
+                    this.setState({
+                        matchedWords: this.state.matchedWords.slice().concat(revealedWords),
+                        unmatchedWords: unmatchedWords
+                            .filter((word) => { return !revealedWords.includes(word) }),
+                        cards: cards.filter((card) => { return card === null })
+                    });
+                }, 2000);
+                
             } else {
                 setTimeout(() => {
                     cards = cards.map(() => { return null });
@@ -70,6 +72,11 @@ class Game extends React.Component {
                     });
                 }, 2000);
             }
+
+            this.setState({
+                nAttempts: this.state.nAttempts + 1
+            });
+
         }
 
     }
@@ -87,7 +94,7 @@ class Game extends React.Component {
 
     render() {
         if (this.state.unmatchedWords.length === 0) {
-            alert('Well done! You matched all the words!')
+            alert(`Well done! You matched all the words in ${this.state.nAttempts} attempts!`)
         }
 
         return (
@@ -99,8 +106,9 @@ class Game extends React.Component {
                     />
                 </div>
                 <div className="game-info">
-                    <div>{'Matched Cards:'}</div>
+                    <div>Matched Cards:</div>
                     {this.renderMatches()}
+                    <div>Attempts:  {this.state.nAttempts}</div>
                 </div>
             </div>
         );
@@ -140,4 +148,3 @@ function generateRows(nColumns, contents, divClassName) {
         </div>
     );
 }
-
