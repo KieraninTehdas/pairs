@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function getDeck(deckName) {
     const pairs = {};
 
@@ -8,5 +10,10 @@ export function getDeck(deckName) {
 
     return pairs;
 }
+
+export default function getDeckNames() {
+    return Object.keys(decks).map((deckName) => <li>{deckName}</li>)
+}
+
 
 const decks = require('./decks/decks1.json')
