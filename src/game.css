@@ -1,3 +1,20 @@
-Unstaged changes after reset:
-M	src/game.css
-M	src/index.css
+.card {
+    background-color: rgba(195, 174, 243, 0.959);
+    flex-grow: 1;
+    padding: 20px;
+    margin: 4px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.game {
+    display: flex;
+}
+
+.game-info {
+    width: 40%;
+}
+
+.game-deck {
+    flex-grow: 1;
+}
