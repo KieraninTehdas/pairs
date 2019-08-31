@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 export default class DeckList extends Component {
     render() {
-        let deckNames = this.props.deckNames.map((deckName) =>
-            <Link to={`play/${deckName}`}>{deckName}</Link>
+        let deckNames = this.props.deckNames.map((deckName, index) =>
+            <li key={index}>
+                <Link to={`/play/${deckName}`}>{deckName}</Link>
+            </li>
         );
 
         return <ul>{deckNames}</ul>;
@@ -23,7 +25,7 @@ export function getDeck(deckName) {
 }
 
 export function getDeckNames() {
-    return Object.keys(decks).map((deckName) => <li>{deckName}</li>)
+    return Object.keys(decks);
 }
 
 

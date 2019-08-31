@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import {
   Route,
   NavLink,
-  HashRouter
+  HashRouter,
 } from "react-router-dom";
 import App from "./app";
 import DeckEditor from "./deck-editor";
@@ -22,10 +22,9 @@ const routing = (
       <div className="content">
         <Route exact path="/" component={App} />
         <Route path="/deck-editor" component={DeckEditor} />
+        <Route path="/play/:deckName" component={Game} />
       </div>
     </div>
-
-    <Route path="play/:deckName" component={Game}></Route>
 
   </HashRouter>
 )

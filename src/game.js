@@ -1,7 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import _shuffle from 'lodash.shuffle';
-import * as deckService from './deckService';
+import * as deckService from './deck-service';
+
+import "./game.css";
 
 function Card(props) {
     return (
@@ -24,10 +25,10 @@ function Deck(props) {
     return generateRows(4, cards, 'deck-row');
 }
 
-class Game extends React.Component {
+export default class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.pairs = deckService.getDeck('test');
+        this.pairs = deckService.getDeck(props.match.params.deckName);
         this.state = {
             cards: Array(Object.keys(this.pairs).length).fill(null),
             unmatchedWords: _shuffle(Object.keys(this.pairs)),
@@ -42,9 +43,6 @@ class Game extends React.Component {
         cards[i] = unmatchedWords[i];
 
         const revealedWords = cards.filter((card) => { return card !== null });
-
-
-        console.log(revealedWords)
 
         if (revealedWords.length < 3) {
             this.setState({
@@ -63,7 +61,7 @@ class Game extends React.Component {
                         cards: cards.filter((card) => { return card === null })
                     });
                 }, 2000);
-                
+
             } else {
                 setTimeout(() => {
                     cards = cards.map(() => { return null });
@@ -99,7 +97,7 @@ class Game extends React.Component {
 
         return (
             <div className="game">
-                <div className="game-deck">
+                <div class="game-deck">
                     <Deck
                         cards={this.state.cards}
                         onClick={(i) => this.handleClick(i)}
@@ -114,11 +112,6 @@ class Game extends React.Component {
         );
     }
 }
-
-ReactDOM.render(
-    <Game />,
-    document.getElementById('root')
-);
 
 function generateRows(nColumns, contents, divClassName) {
     const nFullRows = Math.floor(contents.length / nColumns);
