@@ -12,15 +12,26 @@ function Card(props) {
     );
 }
 
+function RemovedCard() {
+    return (
+        <button className="removed-card"></button>
+    );
+}
+
 function Deck(props) {
-    const cards = props.cards.map((_card, i) => {
-        return (
-            <Card
-                key={i}
-                value={props.cards[i]}
-                onClick={() => props.onClick(i)}
-            />
-        );
+    const cards = props.cards.map((card, i) => {
+        if (card.isMatched) {
+            return <RemovedCard key={i} />;
+        } else {
+            return (
+                <Card
+                    key={i}
+                    value={card.value}
+                    onClick={() => props.onClick(i)}
+                />
+            );
+        }
+
     });
     return generateRows(4, cards, 'deck-row');
 }
@@ -30,7 +41,14 @@ export default class Game extends React.Component {
         super(props);
         this.pairs = deckService.getDeck(props.match.params.deckName);
         this.state = {
-            cards: Array(Object.keys(this.pairs).length).fill(null),
+            cards: Object.entries(this.pairs).map(entry => {
+                return {
+                    value: entry[0],
+                    key: entry[1],
+                    isRevealed: false,
+                    isMatched: false
+                }
+            }),
             unmatchedWords: _shuffle(Object.keys(this.pairs)),
             matchedWords: [],
             nAttempts: 0,
@@ -42,7 +60,7 @@ export default class Game extends React.Component {
         const unmatchedWords = this.state.unmatchedWords.slice();
         cards[i] = unmatchedWords[i];
 
-        const revealedWords = cards.filter((card) => { return card !== null });
+        const revealedWords = cards.filter(card => card.isRevealed);
 
         if (revealedWords.length < 3) {
             this.setState({
@@ -52,21 +70,29 @@ export default class Game extends React.Component {
 
         if (revealedWords.length === 2) {
 
-            if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
+            if (revealedWords[0].key === revealedWords[1].key) {
                 setTimeout(() => {
                     this.setState({
                         matchedWords: this.state.matchedWords.slice().concat(revealedWords),
                         unmatchedWords: unmatchedWords
                             .filter((word) => { return !revealedWords.includes(word) }),
-                        cards: cards.filter((card) => { return card === null })
+                        cards: cards.map((card) => {
+                            if (card != null) {
+                                return undefined;
+                            } else {
+                                return card;
+                            }
+                        })
                     });
                 }, 2000);
 
             } else {
                 setTimeout(() => {
-                    cards = cards.map(() => { return null });
                     this.setState({
-                        cards: cards
+                        cards: cards.map(card => {
+                            card.isRevealed = false;
+                            return card;
+                        })
                     });
                 }, 2000);
             }
