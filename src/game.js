@@ -5,22 +5,43 @@ import * as deckService from './deck-service';
 import "./game.css";
 
 function Card(props) {
+    if (props.isRevealed) {
+        return (
+            <button className="revealed-card" onClick={props.onClick}>
+                {props.value}
+            </button>
+        );
+    } else {
+        return (
+            <button className="concealed-card" onClick={props.onClick}>
+                {null}
+            </button>
+        )
+    }
+
+}
+
+function RemovedCard() {
     return (
-        <button className="card" onClick={props.onClick}>
-            {props.value}
-        </button>
+        <button className="removed-card"></button>
     );
 }
 
 function Deck(props) {
-    const cards = props.cards.map((_card, i) => {
-        return (
-            <Card
-                key={i}
-                value={props.cards[i]}
-                onClick={() => props.onClick(i)}
-            />
-        );
+    const cards = props.cards.map((card, i) => {
+        if (card.isMatched) {
+            return <RemovedCard key={i} />;
+        } else {
+            return (
+                <Card
+                    key={i}
+                    value={card.value}
+                    isRevealed={card.isRevealed}
+                    onClick={() => props.onClick(i)}
+                />
+            );
+        }
+
     });
     return generateRows(4, cards, 'deck-row');
 }
@@ -30,43 +51,58 @@ export default class Game extends React.Component {
         super(props);
         this.pairs = deckService.getDeck(props.match.params.deckName);
         this.state = {
-            cards: Array(Object.keys(this.pairs).length).fill(null),
-            unmatchedWords: _shuffle(Object.keys(this.pairs)),
-            matchedWords: [],
+            cards: _shuffle(
+                Object.entries(this.pairs).map(entry => {
+                    return {
+                        value: entry[0],
+                        key: entry[1],
+                        isRevealed: false,
+                        isMatched: false
+                    }
+                })
+            ),
+            matchedCards: [],
             nAttempts: 0,
         };
     }
 
     handleClick(i) {
         let cards = this.state.cards.slice();
-        const unmatchedWords = this.state.unmatchedWords.slice();
-        cards[i] = unmatchedWords[i];
+        const revealedCard = cards[i];
+        revealedCard.isRevealed = true;
 
-        const revealedWords = cards.filter((card) => { return card !== null });
+        const revealedCards = cards.filter(card => card.isRevealed && !card.isMatched);
 
-        if (revealedWords.length < 3) {
+        if (revealedCards.length < 3) {
             this.setState({
                 cards: cards
             });
         }
 
-        if (revealedWords.length === 2) {
+        if (revealedCards.length === 2) {
 
-            if (this.pairs[revealedWords[0]] === this.pairs[revealedWords[1]]) {
+            if (revealedCards[0].key === revealedCards[1].key) {
                 setTimeout(() => {
                     this.setState({
-                        matchedWords: this.state.matchedWords.slice().concat(revealedWords),
-                        unmatchedWords: unmatchedWords
-                            .filter((word) => { return !revealedWords.includes(word) }),
-                        cards: cards.filter((card) => { return card === null })
+                        matchedCards: this.state.matchedCards.slice().concat(revealedCards),
+                        cards: cards.map((card) => {
+                            if (card.isRevealed && !card.isMatched) {
+                                card.isMatched = true;
+                                return card;
+                            } else {
+                                return card;
+                            }
+                        })
                     });
                 }, 2000);
 
             } else {
                 setTimeout(() => {
-                    cards = cards.map(() => { return null });
                     this.setState({
-                        cards: cards
+                        cards: cards.map(card => {
+                            card.isRevealed = false;
+                            return card;
+                        })
                     });
                 }, 2000);
             }
@@ -80,18 +116,19 @@ export default class Game extends React.Component {
     }
 
     renderMatches() {
-        const words = this.state.matchedWords.map((word, i) => {
+        const cards = this.state.matchedCards.map((card, i) => {
             return <Card
                 key={i}
-                value={word}
+                value={card.value}
+                isRevealed={true}
             />
         });
 
-        return generateRows(2, words, 'matched-row');
+        return generateRows(2, cards, 'matched-row');
     }
 
     render() {
-        if (this.state.unmatchedWords.length === 0) {
+        if (this.state.cards.filter((card) => !card.isMatched).length === 0) {
             alert(`Well done! You matched all the words in ${this.state.nAttempts} attempts!`)
         }
 
