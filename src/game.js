@@ -5,11 +5,20 @@ import * as deckService from './deck-service';
 import "./game.css";
 
 function Card(props) {
-    return (
-        <button className="card" onClick={props.onClick}>
-            {props.value}
-        </button>
-    );
+    if (props.isRevealed) {
+        return (
+            <button className="revealed-card" onClick={props.onClick}>
+                {props.value}
+            </button>
+        );
+    } else {
+        return (
+            <button className="concealed-card" onClick={props.onClick}>
+                {null}
+            </button>
+        )
+    }
+
 }
 
 function RemovedCard() {
@@ -27,6 +36,7 @@ function Deck(props) {
                 <Card
                     key={i}
                     value={card.value}
+                    isRevealed={card.isRevealed}
                     onClick={() => props.onClick(i)}
                 />
             );
@@ -41,24 +51,25 @@ export default class Game extends React.Component {
         super(props);
         this.pairs = deckService.getDeck(props.match.params.deckName);
         this.state = {
-            cards: Object.entries(this.pairs).map(entry => {
-                return {
-                    value: entry[0],
-                    key: entry[1],
-                    isRevealed: false,
-                    isMatched: false
-                }
-            }),
-            unmatchedWords: _shuffle(Object.keys(this.pairs)),
-            matchedWords: [],
+            cards: _shuffle(
+                Object.entries(this.pairs).map(entry => {
+                    return {
+                        value: entry[0],
+                        key: entry[1],
+                        isRevealed: false,
+                        isMatched: false
+                    }
+                })
+            ),
+            matchedCards: [],
             nAttempts: 0,
         };
     }
 
     handleClick(i) {
         let cards = this.state.cards.slice();
-        const unmatchedWords = this.state.unmatchedWords.slice();
-        cards[i] = unmatchedWords[i];
+        const revealedCard = cards[i];
+        revealedCard.isRevealed = true;
 
         const revealedWords = cards.filter(card => card.isRevealed);
 
@@ -73,12 +84,12 @@ export default class Game extends React.Component {
             if (revealedWords[0].key === revealedWords[1].key) {
                 setTimeout(() => {
                     this.setState({
-                        matchedWords: this.state.matchedWords.slice().concat(revealedWords),
-                        unmatchedWords: unmatchedWords
-                            .filter((word) => { return !revealedWords.includes(word) }),
-                        cards: cards.map((card) => {
-                            if (card != null) {
-                                return undefined;
+                        matchedCards: this.state.matchedCards.slice().concat(revealedWords),
+                        cards: cards.filter((card) => {
+                            if (card.isRevealed) {
+                                card.isRevealed = false;
+                                card.isMatched = true;
+                                return card;
                             } else {
                                 return card;
                             }
@@ -106,18 +117,19 @@ export default class Game extends React.Component {
     }
 
     renderMatches() {
-        const words = this.state.matchedWords.map((word, i) => {
+        const cards = this.state.matchedCards.map((card, i) => {
             return <Card
                 key={i}
-                value={word}
+                value={card.value}
+                isRevealed={true}
             />
         });
 
-        return generateRows(2, words, 'matched-row');
+        return generateRows(2, cards, 'matched-row');
     }
 
     render() {
-        if (this.state.unmatchedWords.length === 0) {
+        if (this.state.cards.filter((card) => !card.isMatched).length === 0) {
             alert(`Well done! You matched all the words in ${this.state.nAttempts} attempts!`)
         }
 
