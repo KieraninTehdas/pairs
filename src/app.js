@@ -8,7 +8,7 @@ export default class App extends Component {
         <h2>Home Page</h2>
         <p>Choose a deck to play:</p>
         <div>
-          <DeckList deckNames={getDeckNames()}>
+          <DeckList deckNames={getDeckNames()} path={'play'}>
           </DeckList>
         </div>
       </div>

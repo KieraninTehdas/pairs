@@ -1,16 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
-export default class DeckList extends Component {
-    render() {
-        let deckNames = this.props.deckNames.map((deckName, index) =>
-            <li key={index}>
-                <Link to={`/play/${deckName}`}>{deckName}</Link>
-            </li>
-        );
-
-        return <ul>{deckNames}</ul>;
-    }
+export default function DeckList(props) {
+    const deckNames = props.deckNames.map((deckName, index) =>
+        <li key={index}>
+            <Link to={`${props.path}/${deckName}`}>{deckName}</Link>
+        </li>
+    );
+    return <ul>{deckNames}</ul>;
 }
 
 export function getDeck(deckName) {
