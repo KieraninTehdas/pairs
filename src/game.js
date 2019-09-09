@@ -71,23 +71,22 @@ export default class Game extends React.Component {
         const revealedCard = cards[i];
         revealedCard.isRevealed = true;
 
-        const revealedWords = cards.filter(card => card.isRevealed);
+        const revealedCards = cards.filter(card => card.isRevealed && !card.isMatched);
 
-        if (revealedWords.length < 3) {
+        if (revealedCards.length < 3) {
             this.setState({
                 cards: cards
             });
         }
 
-        if (revealedWords.length === 2) {
+        if (revealedCards.length === 2) {
 
-            if (revealedWords[0].key === revealedWords[1].key) {
+            if (revealedCards[0].key === revealedCards[1].key) {
                 setTimeout(() => {
                     this.setState({
-                        matchedCards: this.state.matchedCards.slice().concat(revealedWords),
-                        cards: cards.filter((card) => {
-                            if (card.isRevealed) {
-                                card.isRevealed = false;
+                        matchedCards: this.state.matchedCards.slice().concat(revealedCards),
+                        cards: cards.map((card) => {
+                            if (card.isRevealed && !card.isMatched) {
                                 card.isMatched = true;
                                 return card;
                             } else {
