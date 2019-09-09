@@ -6,7 +6,7 @@ import {
   HashRouter,
 } from "react-router-dom";
 import App from "./app";
-import DeckEditor from "./deck-editor";
+import DeckEditorHome, { DeckEditor } from "./deck-editor";
 import Game from "./game";
 
 import "./index.css";
@@ -21,8 +21,9 @@ const routing = (
       </ul>
       <div className="content">
         <Route exact path="/" component={App} />
-        <Route path="/deck-editor" component={DeckEditor} />
+        <Route path="/deck-editor" component={DeckEditorHome} />
         <Route path="/play/:deckName" component={Game} />
+        <Route path="/deck-editor/edit/:deckName" component={DeckEditor} />
       </div>
     </div>
 
